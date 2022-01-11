@@ -8,3 +8,6 @@ Reads a png file with a drawing which is made from a continuous line a pixel wid
 The code interprets this line as a function in the complex plane.
 The complex Fourier series' coefficients are calculated.
 The coefficients are used to calculate each phasor's magnitude and angular speed.
+
+Create your own figures using e.g Paint and the pencil tool.
+Note: An issue with the creation of the complex function from the png is that the code cannot handle crossing lines.
