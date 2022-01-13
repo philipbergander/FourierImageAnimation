@@ -1,8 +1,8 @@
 using FileIO, Images
 using Plots
 
-pngFileName = "M:\\Matlab\\img2.png"
-savePath = "C:\\Users\\phiber\\Downloads\\img2Anim.gif"
+pngFileName = "M:\\Matlab\\imgArrow.png"
+savePath = "C:\\Users\\phiber\\Downloads\\imgArrowAnim.gif"
 
 function main(pngFile, savePath)
 
@@ -54,15 +54,16 @@ function main(pngFile, savePath)
     f[:,2] = f[:,2] .- mid[2]
 
     #### Complex Fourier Series  ####
-    t = range(0,1,length = size(f,1)) # Discrete time steps
+    t = range(0,1,length = size(f,1)+1) # Discrete time steps
+    t = t[begin:end-1]
 
-    N = 20 #Number of non-static coefficients. Shall be even
+    N = 200 #Number of non-static coefficients. Shall be even
     cp = Vector{Complex{Float64}}(undef,Int64(N/2)) #Positive coefficients
     cn = Vector{Complex{Float64}}(undef,Int64(N/2)) #Negative coefficients
     c0 = sum(f[:,1] .+ 1im.* f[:,2]) ./ size(f,1) #static coefficient
     
     # Calculation of Fourier coefficients
-    for k=1:Int64(N/2)
+    for k=eachindex(cp)
         cp[k] = sum((f[:,1] .+ 1im.*f[:,2]) .* exp.(-k*2im*pi.*t))./size(f,1)
         cn[k] = sum((f[:,1] .+ 1im.*f[:,2]) .* exp.(k*2im*pi.*t))./size(f,1)
     end
@@ -71,7 +72,7 @@ function main(pngFile, savePath)
     function vecsumFunc(tt)
         #Function to calculate the sum of the phasors
         F = c0;
-        for k = 1:Int64(N/2)
+        for k = eachindex(cp)
             F = F + cp[k]*exp(k*2im*pi*tt) + cn[k]*exp(-k*2im*pi*tt)
         end
         return F
@@ -89,7 +90,7 @@ function main(pngFile, savePath)
 
         plot!([0,real(c0)],[0,imag(c0)], arrow=false,linewidth=1,color=:black, label=false)
         vecSum = c0;
-        for k = 1:Int64(N/2)
+        for k = eachindex(cp)
             plot!([real(vecSum),real(vecSum + cp[k]*exp(k*2im*pi*t[i]))],
              [imag(vecSum),imag(vecSum + cp[k]*exp(k*2im*pi*t[i]))],
              arrow=false,linewidth=1,color=:dodgerblue4, label=false)
@@ -102,7 +103,7 @@ function main(pngFile, savePath)
         end
     end
 
-    println("Create gif-file...")
+    println("Create gif...")
 
     gif(anim, savePath, fps = 50)
 
@@ -118,7 +119,7 @@ end
     seriesalpha --> [range(0, 0, length = Int64(floor(n/2))); range(0, 1, length = Int64(ceil(n/2)))]
     aspec_ratio --> 1
     label --> false
-    size --> (1920,1080)
+    size --> (1080,1080)
     framestyle --> :none
     x[inds], y[inds]
 end
